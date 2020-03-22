@@ -42,8 +42,8 @@ router.all('/logout', isAuthenticated, async (ctx) => {
   }
 });
 
-router.all('/state', isAuthenticated, async (ctx) => {
-  console.log(ctx.isAuthenticated(), ctx.isUnauthenticated())
+router.all('/state',  async (ctx) => {
+  console.log('STATE', ctx.isAuthenticated(), ctx.isUnauthenticated())
   if (ctx.isAuthenticated()) {
     ctx.body = { success: true, authenticated: true };
   } else {

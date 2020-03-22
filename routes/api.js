@@ -1,21 +1,14 @@
 const router = require('koa-router')()
+const tasks = require('../controllers/tasks');
+const categories = require('../controllers/categories');
+const items = require('../controllers/items');
 
 router.prefix('/api/v1');
 
-router.get('/', async (ctx, next) => {
-  await ctx.render('index', {
-    title: 'Hello Koa 2!'
-  })
-});
+router.get('/tasks', tasks.list);
+router.get('/tasks-auth', tasks.listAuth); // ejemplo
 
-router.get('/string', async (ctx, next) => {
-  ctx.body = 'koa2 string'
-});
-
-router.get('/json', async (ctx, next) => {
-  ctx.body = {
-    title: 'koa2 json'
-  }
-});
+router.get('/categories/:task_id', categories.list);
+router.get('/items/:category_id', items.list);
 
 module.exports = router;

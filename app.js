@@ -68,10 +68,9 @@ app.use((ctx, next) => {
   return next();
 });
 
-
 // socket middlewares
-require('./middleware/io')(app);
-require('./middleware/chat')(app);
+require('./middleware/io')(app, { pools, passport });
+require('./middleware/chat')(app, { pools, passport });
 
 // Routes
 const index = require('./routes/index');

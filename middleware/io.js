@@ -1,9 +1,18 @@
 const IO = require('koa-socket-2');
 const io = new IO()
-  , koaRedis = require('socket.io-redis');
+  , koaRedis = require('socket.io-redis')
+  , path = require('path');
 
 
-module.exports = (app) => {
+module.exports = (app, { pools, passport }) => {
+  io.use((ctx, next) => {
+    ctx.cacheTTL = process.env.CACHE_TTL || 60;
+    ctx.pools = pools;
+    ctx.passport = passport;
+    ctx.redis = pools.redis;
+    return next();
+  });
+
   io.attach(app);
   app._io.adapter(koaRedis(process.env.REDIS_URL));
 
@@ -65,6 +74,13 @@ module.exports = (app) => {
 
   io.on('numConnections', packet => {
     console.log(`Number of connections: ${io.connections.size}`);
+  });
+
+
+  io.on('get', async (ctx, data) => {
+    console.log('get %s / %s', path.basename(path.dirname(data)), path.basename(data));
+    const categories = require('../controllers/' + path.basename(path.dirname(data)));
+    await categories.list({ ...ctx, app, params: { task_id: path.basename(data) } });
   });
 
   return io;
