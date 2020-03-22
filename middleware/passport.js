@@ -40,20 +40,21 @@ module.exports = (app) => {
   passport.deserializeUser((user, done) => {
     return done(null, user);
   });
-  passport.use(new LocalStrategy(options, (username, password, done) => {
-    console.log('Passport con LocalStrategy', username, password);
-    if (!global.pools || !global.pools.pg) return done(null, false);
-    if (true) {
-      const userObj = { username, password, id: 1 }
-      return done(null, userObj);
-    } else {
-      console.log('Contraseña incorrecta');
-      return done(null, false);
+  passport.use(new LocalStrategy(options, async (username, password, done) => {
+    try {
+      console.log('Passport con LocalStrategy', username, password);
+      if (!global.pools || !global.pools.pg) return done(null, false);
+      const userObj = await global.pools.pg.query('SELECT * FROM users WHERE username = $1 AND password = $2', [ username, password ]);
+      if (userObj.rows.length) {
+        return done(null, userObj.rows[0]);
+      } else {
+        console.log('Contraseña incorrecta');
+        return done(null, false);
+      }
+    } catch (err) {
+      console.log('Error en control de acceso: ', err);
+      return done(err);
     }
-// .catch((err) => {
-//     console.log('Error en control de acceso: ', err);
-//   return done(err);
-// });
   }));
 
   return passport;

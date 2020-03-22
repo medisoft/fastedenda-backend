@@ -14,7 +14,7 @@ router.post('/login', async (ctx) => {
     return;
   }
   return await ctx.passport.authenticate('local', { session: false }, async (err, user, info, status) => {
-    console.log('Usuario autenticado con estrategia Local');
+    console.log('Usuario autenticado con estrategia Local', user);
     if (user) {
       await ctx.login(user, { session: false });
       const jwtOptions = {
