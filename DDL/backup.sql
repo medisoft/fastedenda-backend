@@ -108,6 +108,19 @@ ALTER SEQUENCE public.categories_id_seq OWNED BY public.categories.id;
 
 
 --
+-- Name: inventory; Type: TABLE; Schema: public; Owner: faste
+--
+
+CREATE TABLE public.inventory (
+    item_id integer NOT NULL,
+    provider_id integer NOT NULL,
+    available numeric(16,2) DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.inventory OWNER TO faste;
+
+--
 -- Name: items; Type: TABLE; Schema: public; Owner: faste
 --
 
@@ -116,7 +129,8 @@ CREATE TABLE public.items (
     name character varying(128) NOT NULL,
     base_price numeric(10,2) DEFAULT 0.0 NOT NULL,
     image character varying(256) NOT NULL,
-    brand_id integer NOT NULL
+    brand_id integer NOT NULL,
+    custom_fields jsonb DEFAULT '{"description": "Description Missing"}'::jsonb NOT NULL
 );
 
 
@@ -263,12 +277,20 @@ COPY public.categories (id, name, parent_id, task_id, action, image, orderby) FR
 
 
 --
+-- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: faste
+--
+
+COPY public.inventory (item_id, provider_id, available) FROM stdin;
+\.
+
+
+--
 -- Data for Name: items; Type: TABLE DATA; Schema: public; Owner: faste
 --
 
-COPY public.items (id, name, base_price, image, brand_id) FROM stdin;
-1	Un producto	8.50	https://firebasestorage.googleapis.com/v0/b/faste-denda.appspot.com/o/cocacola.jpg?alt=media&token=9bda4608-fc8d-4aa5-9755-92c0e6fffac8	1
-2	Otro producto	11.25	https://firebasestorage.googleapis.com/v0/b/faste-denda.appspot.com/o/lala.jpg?alt=media&token=c21b37d9-6fff-4d6b-827d-6c46bef079ab	1
+COPY public.items (id, name, base_price, image, brand_id, custom_fields) FROM stdin;
+1	Un producto	8.50	https://firebasestorage.googleapis.com/v0/b/faste-denda.appspot.com/o/cocacola.jpg?alt=media&token=9bda4608-fc8d-4aa5-9755-92c0e6fffac8	1	{"description": "Description Missing"}
+2	Otro producto	11.25	https://firebasestorage.googleapis.com/v0/b/faste-denda.appspot.com/o/lala.jpg?alt=media&token=c21b37d9-6fff-4d6b-827d-6c46bef079ab	1	{"description": "Description Missing"}
 \.
 
 
@@ -287,10 +309,10 @@ COPY public.items_categories (item_id, category_id) FROM stdin;
 --
 
 COPY public.tasks (id, title, action, image, orderby) FROM stdin;
-farmacia	Farmacia	drugstoreList	farmacia2	4
 gourmet	Productos Gourmet	gourmetList	productos gourmet2.png	3
 platillos	Platillos Preparados	cuisineList	alimentos preparados2.png	2
 tiendita	Hacer el Súper	productList	hacer el super2.png	1
+farmacia	Farmacia	drugstoreList	farmacia2.png	4
 \.
 
 
@@ -345,6 +367,14 @@ ALTER TABLE ONLY public.brands
 
 ALTER TABLE ONLY public.categories
     ADD CONSTRAINT categories_pk PRIMARY KEY (id);
+
+
+--
+-- Name: inventory inventory_pk; Type: CONSTRAINT; Schema: public; Owner: faste
+--
+
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT inventory_pk PRIMARY KEY (provider_id, item_id);
 
 
 --
@@ -456,6 +486,14 @@ ALTER TABLE ONLY public.categories
 
 ALTER TABLE ONLY public.categories
     ADD CONSTRAINT categories_tasks_id_fk FOREIGN KEY (task_id) REFERENCES public.tasks(id);
+
+
+--
+-- Name: inventory inventory_items_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: faste
+--
+
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT inventory_items_id_fk FOREIGN KEY (item_id) REFERENCES public.items(id);
 
 
 --
