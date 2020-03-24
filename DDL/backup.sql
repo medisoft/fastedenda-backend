@@ -16,6 +16,61 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE ONLY public.items_categories DROP CONSTRAINT items_categories_items_id_fk;
+ALTER TABLE ONLY public.items_categories DROP CONSTRAINT items_categories_categories_id_fk;
+ALTER TABLE ONLY public.items DROP CONSTRAINT items_brands_id_fk;
+ALTER TABLE ONLY public.inventory DROP CONSTRAINT inventory_items_id_fk;
+ALTER TABLE ONLY public.categories DROP CONSTRAINT categories_tasks_id_fk;
+ALTER TABLE ONLY public.categories DROP CONSTRAINT categories_categories_id_fk;
+DROP INDEX public.users_username_uindex;
+DROP INDEX public.users_id_uindex;
+DROP INDEX public.users_email_uindex;
+DROP INDEX public.tasks_id_uindex;
+DROP INDEX public.items_id_uindex;
+DROP INDEX public.categories_name_task_id_uindex;
+DROP INDEX public.categories_id_uindex;
+DROP INDEX public.brands_name_uindex;
+DROP INDEX public.brands_id_uindex;
+ALTER TABLE ONLY public.users DROP CONSTRAINT users_pk;
+ALTER TABLE ONLY public.tasks DROP CONSTRAINT tasks_pk;
+ALTER TABLE ONLY public.items DROP CONSTRAINT items_pk;
+ALTER TABLE ONLY public.items_categories DROP CONSTRAINT items_categories_pk;
+ALTER TABLE ONLY public.inventory DROP CONSTRAINT inventory_pk;
+ALTER TABLE ONLY public.categories DROP CONSTRAINT categories_pk;
+ALTER TABLE ONLY public.brands DROP CONSTRAINT brands_pk;
+ALTER TABLE public.users ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.items ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.categories ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.brands ALTER COLUMN id DROP DEFAULT;
+DROP SEQUENCE public.users_id_seq;
+DROP TABLE public.users;
+DROP TABLE public.tasks;
+DROP SEQUENCE public.items_id_seq;
+DROP TABLE public.items_categories;
+DROP TABLE public.items;
+DROP TABLE public.inventory;
+DROP SEQUENCE public.categories_id_seq;
+DROP TABLE public.categories;
+DROP SEQUENCE public.brands_id_seq;
+DROP TABLE public.brands;
+DROP EXTENSION plpgsql;
+DROP SCHEMA public;
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO postgres;
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
@@ -518,6 +573,13 @@ ALTER TABLE ONLY public.items_categories
 
 ALTER TABLE ONLY public.items_categories
     ADD CONSTRAINT items_categories_items_id_fk FOREIGN KEY (item_id) REFERENCES public.items(id);
+
+
+--
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
