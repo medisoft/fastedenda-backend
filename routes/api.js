@@ -10,5 +10,6 @@ router.get('/tasks-auth', tasks.listAuth); // ejemplo
 
 router.get('/categories/:task_id', categories.list);
 router.get('/items/:category_id', items.list);
+router.get('/item/:item_id', items.get);
 
 module.exports = router;
